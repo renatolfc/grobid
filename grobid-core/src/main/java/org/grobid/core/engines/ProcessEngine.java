@@ -165,6 +165,16 @@ public class ProcessEngine implements Closeable {
             for (final File currPdf : files) {
                 try {
                     if (currPdf.getName().toLowerCase().endsWith(".pdf")) {
+                        File outputPathFile = new File(outputPath);
+                        File destinationPath = new File(
+                            outputPath + File.separator
+                            + new File(currPdf.getAbsolutePath())
+                            .getName().replace(".pdf", ".tei.xml").replace(".PDF", ".tei.xml")
+                        );
+                        if (destinationPath.exists()) {
+                            System.out.println("File " + destinationPath.getAbsolutePath() + " already exists, skipping.");
+                            continue;
+                        }
                         System.out.println("Processing: " + currPdf.getPath());
                         GrobidAnalysisConfig config = null;
                         // path for saving assets
@@ -184,7 +194,6 @@ public class ProcessEngine implements Closeable {
                                     .generateTeiIds(addElementId)
                                     .build();
                         result = getEngine().fullTextToTEI(currPdf, config);
-                        File outputPathFile = new File(outputPath);
                         if (!outputPathFile.exists()) {
                             outputPathFile.mkdir();
                         }
